@@ -8,8 +8,7 @@ export default function Die(props) {
 		: '';
 
 	const styling = {
-		backgroundColor: props.isFinished ? '#59E391' : props.isHeld ? '#008adf4c' : '#FFF',
-		fontWeight: props.isFinished ? 500 : props.isHeld ? 500 : 300,
+		backgroundColor: props.isHeld ? '#008adf4c' : '#FFF',
 	};
 
 	return (

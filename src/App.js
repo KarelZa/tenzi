@@ -6,20 +6,52 @@ import Confetti from 'confetti-react';
 import Button from './components/Button';
 
 function App() {
+	const myObjectTimer = {
+		currentTimer: 0,
+		bestTime: 0,
+	};
+
 	const [diceNum, setDiceNum] = useState(allNewDice());
 	const [hasWon, setHasWon] = useState(false);
-	const [numOfRolls, setNumOfRolls] = useState(0);
+	const [numOfRolls, setNumOfRolls] = useState(() => 0);
+	const [timer, setTimer] = useState(() => {
+		return JSON.parse(localStorage.getItem('myTimer')) || myObjectTimer;
+	});
 
+	const [start, setStart] = useState(false);
+
+	//
 	useEffect(() => {
 		const allHeld = diceNum.every((die) => die.isHeld);
 		const firstValue = diceNum[0].value;
 		const allTheSameValue = diceNum.every((die) => die.value === firstValue);
 		if (allHeld && allTheSameValue) {
 			setHasWon(true);
+			setStart(false);
 		}
 	}, [diceNum]);
 
-	console.log(numOfRolls);
+	// Takes care of timer
+	useEffect(() => {
+		let interval = null;
+		if (start) {
+			interval = setInterval(() => {
+				setTimer((prevTimer) => {
+					return {
+						...prevTimer,
+						currentTimer: prevTimer.currentTimer + 1,
+					};
+				});
+			}, 1000);
+		} else {
+			clearInterval(interval);
+		}
+		// Saves current timerr value into LocalStorage
+		localStorage.setItem('mytimer', JSON.stringify(timer));
+		// Clean-up
+		return () => clearInterval(interval);
+	}, [start, timer]);
+
 	// Generate a new die
 	function generateNewDie() {
 		return {
@@ -44,8 +76,17 @@ function App() {
 			setHasWon(false);
 			setDiceNum(allNewDice());
 			setNumOfRolls(0);
+
+			setTimer((prevTimer) => {
+				return {
+					...prevTimer,
+					bestTime: prevTimer.currentTimer,
+					currentTimer: 0,
+				};
+			});
 		} else {
 			setNumOfRolls((prevNumOfRolls) => prevNumOfRolls + 1);
+			setStart(true);
 			setDiceNum((prevDice) =>
 				prevDice.map((die) => {
 					if (die.isHeld === false) {
@@ -83,7 +124,7 @@ function App() {
 	const diceElements = diceNum.map((die) => {
 		// 2ways how to get correct id down to child
 		// 1st - sending anonymous fnc down to die with correct id -> basically emmbeding id as parameter that will be called with the function --> whenever the die is clicked
-		return <Die holdDice={() => holdDice(die.id)} key={die.id} isFinished={hasWon} isHeld={die.isHeld} value={die.value} />;
+		return <Die holdDice={() => holdDice(die.id)} key={die.id} isHeld={die.isHeld} value={die.value} />;
 		// 2nd - sending both fnc and id - seperately --> in die then call function with id argument
 		// return <Die holdDice={holdDice} id={die.id} key={die.id} isHeld={die.isHeld} value={die.value} />;
 	});
@@ -94,10 +135,17 @@ function App() {
 				{hasWon ? (
 					<div className='gameFinished'>
 						<Confetti />
-						<span className='gameFinished--Congratz'>Congratulations</span>
+						<div className='gameFinished--Congratz'>
+							<span>Congratulations</span>
+							<br />
+							<span>🎉🎉🎉</span>
+						</div>
 						<p className='gameFinished--message'>
 							It took you <b>{numOfRolls}</b> 🎲 rolls to finish Tenzi.{' '}
 						</p>
+						<h2 className='gameFinished--timer'>
+							You've completed the game in <b>{timer.currentTimer}</b> s
+						</h2>
 						<Button text='NEW GAME' onClick={rollBtnHandler} />
 					</div>
 				) : (
@@ -109,9 +157,6 @@ function App() {
 							</p>
 						</div>
 						<div className='dice-wrapper'>{diceElements}</div>
-						{/* <button className='button roll--text' onClick={rollBtnHandler}>
-							ROLL 🎲
-						</button> */}
 						<Button text='ROLL 🎲' onClick={rollBtnHandler} />
 					</div>
 				)}

@@ -154,3 +154,8 @@ main {
 	font-size: 1.5rem;
 	padding: 0 1rem;
 }
+
+.gameFinished--time {
+	padding: 0 1rem;
+	font-weight: normal;
+}
