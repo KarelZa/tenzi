@@ -7,12 +7,13 @@ body {
 	padding: 0;
 	font-family: 'Poppins', 'sans-serif';
 	background-color: #0b2434;
+	position: relative;
 }
 
 main {
 	background-color: #f5f5f5;
-	height: 100vh;
-	margin: 1.5rem 1rem;
+	height: 95vh;
+	margin: 1rem;
 	border-radius: 0.5rem;
 }
 
@@ -27,6 +28,7 @@ main {
 .tenzi--title {
 	font-size: 2rem;
 	margin: 0;
+	margin-bottom: 0.3rem;
 	text-align: center;
 }
 
@@ -43,22 +45,6 @@ main {
 	display: grid;
 	grid-template: auto auto / repeat(2, 1fr);
 	gap: 1.5rem;
-}
-
-.die {
-	height: 4.2rem;
-	width: 4.2rem;
-	/* margin: 1rem; */
-	border-radius: 0.5rem;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.468);
-	cursor: pointer;
-}
-
-.die--text {
-	font-size: 2rem;
 }
 
 .button {
@@ -92,11 +78,8 @@ main {
 		'a . c'
 		'e g f'
 		'd . b';
-
 	height: 4.2rem;
 	width: 4.2rem;
-	/* margin: 1rem; */
-	/* border-radius: 0.5rem; */
 	padding: 0.6rem 0.3rem 0.6rem 0.3rem;
 	cursor: pointer;
 
@@ -136,26 +119,145 @@ main {
 	grid-area: g;
 }
 
-.gameFinished {
+.conffeti {
+	position: fixed;
+	margin-top: -2rem;
+}
+
+.statsPage {
 	height: inherit;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: space-evenly;
+	justify-content: space-around;
 	text-align: center;
 }
 
-.gameFinished--Congratz {
+.statsPage--congratz {
 	font-size: 2.2rem;
 	font-weight: 600;
 }
 
-.gameFinished--message {
-	font-size: 1.5rem;
-	padding: 0 1rem;
+.statsPage--stats {
+	font-weight: normal;
+	font-size: 1.3rem;
 }
 
-.gameFinished--time {
-	padding: 0 1rem;
-	font-weight: normal;
+.statsPage--stats-recordMessage {
+	line-height: 2.8rem;
+	font-size: 1.6rem;
+}
+
+.statsPage--stats-record {
+	font-weight: bold;
+	font-size: 1.5rem;
+}
+
+.divider {
+	width: 40px;
+	height: 2px;
+	background-color: rgba(178, 178, 178, 0.029);
+	margin: 2.5rem auto;
+}
+
+@media only screen and (min-width: 738px) {
+	main {
+		height: 96vh;
+		margin-bottom: 0;
+	}
+
+	.tenzi--title {
+		font-size: 5rem;
+		margin-bottom: 1rem;
+	}
+
+	.tenzi--instructions {
+		padding: 0rem 3.6rem 0.3rem 3.6rem;
+		font-size: 1.8rem;
+	}
+
+	.dice-wrapper {
+		grid-template: auto auto / repeat(5, 1fr);
+		gap: 1.8rem;
+	}
+
+	.button {
+		width: 18rem;
+		height: 5.4rem;
+	}
+
+	.roll--text {
+		font-size: 2.7rem;
+	}
+
+	.face {
+		height: 6.3rem;
+		width: 6.3rem;
+	}
+
+	.pip {
+		width: 18px;
+		height: 18px;
+	}
+
+	.statsPage {
+		justify-content: space-around;
+	}
+
+	.statsPage--congratz {
+		font-size: 4.2rem;
+		font-weight: 600;
+	}
+
+	.statsPage--stats-recordMessage {
+		line-height: 4rem;
+		font-size: 2.6rem;
+	}
+
+	.statsPage--stats-record {
+		font-size: 2.5rem;
+	}
+}
+
+@media only screen and (min-width: 1024px) {
+	.tenzi--title {
+		font-size: 6rem;
+	}
+
+	.dice-wrapper {
+		grid-template: auto auto / repeat(5, 1fr);
+		gap: 2.5rem;
+	}
+
+	.roll--text {
+		font-size: 2.7rem;
+	}
+
+	.face {
+		height: 7rem;
+		width: 7rem;
+	}
+
+	.pip {
+		width: 20px;
+		height: 20px;
+	}
+
+	.statsPage {
+		justify-content: space-around;
+	}
+
+	.statsPage--congratz {
+		font-size: 4.2rem;
+		font-weight: 600;
+	}
+
+	.statsPage--stats-recordMessage {
+		line-height: 4rem;
+		font-size: 2.6rem;
+	}
+
+	.statsPage--stats-record {
+		font-size: 2.5rem;
+	}
 }

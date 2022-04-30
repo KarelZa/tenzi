@@ -1,6 +1,7 @@
 import React from 'react';
 
 export default function Die(props) {
+	// Based on value --> number of pips rendered
 	let pips = props.value
 		? Array(props.value)
 				.fill(0)
@@ -13,7 +14,6 @@ export default function Die(props) {
 
 	return (
 		<div className='face' style={styling} onClick={props.holdDice}>
-			{/* <span className='die--text '>{props.value}</span> */}
 			{pips}
 		</div>
 	);

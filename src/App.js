@@ -1,56 +1,58 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './App.css';
+
 import Die from './components/Die';
 import { nanoid } from 'nanoid';
-import Confetti from 'confetti-react';
-import Button from './components/Button';
+import StatsPage from './components/StatsPage';
+import MainGame from './components/MainGame';
 
-function App() {
-	const myObjectTimer = {
-		currentTimer: 0,
-		bestTime: 0,
-	};
-
-	const [diceNum, setDiceNum] = useState(allNewDice());
-	const [hasWon, setHasWon] = useState(false);
-	const [numOfRolls, setNumOfRolls] = useState(() => 0);
-	const [timer, setTimer] = useState(() => {
-		return JSON.parse(localStorage.getItem('myTimer')) || myObjectTimer;
+function App(props) {
+	const [tenziDice, setTenziDice] = useState(allNewDice());
+	const [gameFinished, setGameFinished] = useState(false); // game state
+	const [numOfRolls, setNumOfRolls] = useState(0); // counter of rolls
+	const [timer, setTimer] = useState(0); // timer state
+	const [bestTime, setBestTime] = useState(() => {
+		return JSON.parse(localStorage.getItem('myBestTime')) || '1000';
 	});
+	const [toggleTimer, setToggleTimer] = useState(false); // toggleTimer
+	const recordMessage = useRef('');
 
-	const [start, setStart] = useState(false);
-
-	//
+	// Innitialize localstorage
 	useEffect(() => {
-		const allHeld = diceNum.every((die) => die.isHeld);
-		const firstValue = diceNum[0].value;
-		const allTheSameValue = diceNum.every((die) => die.value === firstValue);
+		localStorage.setItem('myBestTime', bestTime);
+	}, [bestTime]);
+
+	// Takes care about game-winning logic
+	useEffect(() => {
+		const allHeld = tenziDice.every((die) => die.isHeld); // All dice are held
+		const firstValue = tenziDice[0].value; // takes first die's value
+		const allTheSameValue = tenziDice.every((die) => die.value === firstValue); // compare other value of dice with first one
 		if (allHeld && allTheSameValue) {
-			setHasWon(true);
-			setStart(false);
+			if (timer < bestTime) {
+				setBestTime(timer);
+				recordMessage.current = `🏆 New Record Time 🏆`;
+			} else {
+				recordMessage.current = `Current best time ${bestTime} s`;
+			}
+			setGameFinished(true);
+			setToggleTimer(false);
 		}
-	}, [diceNum]);
+	}, [tenziDice, timer, bestTime]);
 
 	// Takes care of timer
 	useEffect(() => {
 		let interval = null;
-		if (start) {
+		if (toggleTimer) {
 			interval = setInterval(() => {
-				setTimer((prevTimer) => {
-					return {
-						...prevTimer,
-						currentTimer: prevTimer.currentTimer + 1,
-					};
-				});
+				setTimer((prevtimer) => prevtimer + 1);
 			}, 1000);
 		} else {
+			// Clears intervatel whenever timer stops
 			clearInterval(interval);
 		}
-		// Saves current timerr value into LocalStorage
-		localStorage.setItem('mytimer', JSON.stringify(timer));
-		// Clean-up
+		// Clean-up - to prevent memory-leak
 		return () => clearInterval(interval);
-	}, [start, timer]);
+	}, [toggleTimer]);
 
 	// Generate a new die
 	function generateNewDie() {
@@ -72,22 +74,15 @@ function App() {
 
 	// Roll the dice
 	function rollBtnHandler() {
-		if (hasWon) {
-			setHasWon(false);
-			setDiceNum(allNewDice());
+		if (gameFinished) {
+			setGameFinished(false);
+			setTenziDice(allNewDice());
 			setNumOfRolls(0);
-
-			setTimer((prevTimer) => {
-				return {
-					...prevTimer,
-					bestTime: prevTimer.currentTimer,
-					currentTimer: 0,
-				};
-			});
+			setTimer(0);
 		} else {
 			setNumOfRolls((prevNumOfRolls) => prevNumOfRolls + 1);
-			setStart(true);
-			setDiceNum((prevDice) =>
+			setToggleTimer(true);
+			setTenziDice((prevDice) =>
 				prevDice.map((die) => {
 					if (die.isHeld === false) {
 						return generateNewDie();
@@ -102,8 +97,8 @@ function App() {
 	// To determine which dice want user hold
 	function holdDice(id) {
 		// 1. call Function that sets State
-		setDiceNum((prevDiceNum) =>
-			// 2. map over prevState of diceNum
+		setTenziDice((prevDiceNum) =>
+			// 2. map over prevState of tenziDice
 			prevDiceNum.map((die) => {
 				// 3. If die.id matches clicked id
 				if (die.id === id) {
@@ -121,7 +116,7 @@ function App() {
 	}
 
 	// Maps over Array of numbers and create dice
-	const diceElements = diceNum.map((die) => {
+	const diceElements = tenziDice.map((die) => {
 		// 2ways how to get correct id down to child
 		// 1st - sending anonymous fnc down to die with correct id -> basically emmbeding id as parameter that will be called with the function --> whenever the die is clicked
 		return <Die holdDice={() => holdDice(die.id)} key={die.id} isHeld={die.isHeld} value={die.value} />;
@@ -132,33 +127,15 @@ function App() {
 	return (
 		<div className='App'>
 			<main>
-				{hasWon ? (
-					<div className='gameFinished'>
-						<Confetti />
-						<div className='gameFinished--Congratz'>
-							<span>Congratulations</span>
-							<br />
-							<span>🎉🎉🎉</span>
-						</div>
-						<p className='gameFinished--message'>
-							It took you <b>{numOfRolls}</b> 🎲 rolls to finish Tenzi.{' '}
-						</p>
-						<h2 className='gameFinished--timer'>
-							You've completed the game in <b>{timer.currentTimer}</b> s
-						</h2>
-						<Button text='NEW GAME' onClick={rollBtnHandler} />
-					</div>
+				{gameFinished ? (
+					<StatsPage
+						numOfRolls={numOfRolls}
+						timer={timer}
+						recordMessage={recordMessage.current}
+						rollBtnHandler={rollBtnHandler}
+					/>
 				) : (
-					<div className='mainGame'>
-						<div className='tenzi-description'>
-							<h1 className='tenzi--title'>Tenzi</h1>
-							<p className='tenzi--instructions'>
-								Roll until all dice are the same. Click each die to freeze it at its current value between rolls.
-							</p>
-						</div>
-						<div className='dice-wrapper'>{diceElements}</div>
-						<Button text='ROLL 🎲' onClick={rollBtnHandler} />
-					</div>
+					<MainGame diceElements={diceElements} rollBtnHandler={rollBtnHandler} />
 				)}
 			</main>
 		</div>
