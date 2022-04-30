@@ -1,3 +1,12 @@
 # TENZI
-Simple React dice game 
--- not fully completed 26.4
+Simple Dice Game - build with ReactJS
+
+utilize
+- usestate,useeffect,useref hooks
+- localstorage
+- reusable components
+
+in future should add 
+- styled-components
+- scoreboard
+
