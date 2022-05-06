@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 
-export default function WindowSize() {
+export default function useWindowSize() {
 	const [windowSize, setWindowSize] = useState({
 		width: undefined,
 		height: undefined,
 	});
+
 	useEffect(() => {
 		// Handler to call on window resize
 		function handleResize() {

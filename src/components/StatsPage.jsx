@@ -1,10 +1,10 @@
 import React from 'react';
 import Confetti from 'confetti-react';
-import WindowSize from '../hooks/WindowSize';
+import useWindowSize from '../hooks/useWindowSize';
 import Button from './Button';
 
 export default function StatsPage(props) {
-	const size = WindowSize(); // WindowSize hook --> to responsively use confetti
+	const size = useWindowSize(); // WindowSize hook --> to responsively use confetti
 	return (
 		<div className='statsPage'>
 			<Confetti
