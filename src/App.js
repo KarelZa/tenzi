@@ -1,10 +1,34 @@
 import React from 'react';
+import { ThemeProvider } from 'styled-components'; // Providing global state for theme
 import './App.css';
 
 import Die from './components/Die';
-import StatsPage from './components/StatsPage';
+import StatsPage from './components/Stats';
 import MainGame from './components/MainGame';
 import useGameLogic from './hooks/useGameLogic';
+import GlobalStyles from './components/styles/GlobalStyle';
+import { GameContainer } from './components/styles/GameContainer.styled';
+
+// THEME OBJECT
+const theme = {
+	// Setting default colors for the parts of the webpage
+	colors: {
+		header: '#ebfbff',
+		body: '#fff',
+		footer: '#003333',
+	},
+	// Media Query Sizes
+	sizes: {
+		small: '600px',
+		medium: '768px',
+		large: '992px',
+	},
+	typography: {
+		small: '1.5rem',
+		medium: '2rem',
+		large: '2.5rem',
+	},
+};
 
 function App() {
 	const { tenziDice, gameFinished, numOfRolls, timer, recordMessage, holdDice, rollBtnHandler } = useGameLogic();
@@ -19,8 +43,11 @@ function App() {
 	});
 
 	return (
-		<div className='App'>
-			<main>
+		// Providing theme object to theme prop
+		<ThemeProvider theme={theme}>
+			{/* Global styles */}
+			<GlobalStyles />
+			<GameContainer>
 				{gameFinished ? (
 					<StatsPage
 						numOfRolls={numOfRolls}
@@ -31,8 +58,8 @@ function App() {
 				) : (
 					<MainGame diceElements={diceElements} rollBtnHandler={rollBtnHandler} />
 				)}
-			</main>
-		</div>
+			</GameContainer>
+		</ThemeProvider>
 	);
 }
 
