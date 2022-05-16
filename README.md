@@ -3,6 +3,7 @@ Simple Dice Game - build with ReactJS
 
 utilize
 - usestate,useeffect,useref hooks
+- Custom Hooks
 - localstorage
 - reusable components
 
