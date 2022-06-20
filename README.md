@@ -7,9 +7,6 @@ utilize
 - localstorage
 - reusable components
 
-in future should add 
-- styled-components
-- scoreboard
 
 Link to live-view: https://karelza.github.io/tenzi/
 
