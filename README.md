@@ -1,5 +1,5 @@
 # TENZI
-Simple Dice Game - build with ReactJS
+Dice Game - build with React library
 
 utilize
 - Custom Hooks
